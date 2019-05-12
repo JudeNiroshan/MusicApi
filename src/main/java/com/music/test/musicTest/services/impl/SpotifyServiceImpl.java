@@ -32,6 +32,10 @@ public class SpotifyServiceImpl implements SpotifyService {
 
     private Logger logger = LoggerFactory.getLogger(SpotifyServiceImpl.class);
 
+    public SpotifyServiceImpl(SpotifyUtil spotifyUtil) {
+        this.spotifyUtil = spotifyUtil;
+    }
+
     @Override
     public List<PlayListInfo> getPlayListInfoList() throws IOException, SpotifyWebApiException {
         SpotifyApi spotifyApiClient = spotifyUtil.getSpotifyApiClient();

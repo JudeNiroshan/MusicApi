@@ -17,6 +17,11 @@ public class SpotifyUtil {
     @Value("${spotify.clientsecret}")
     private String clientSecret;
 
+    public SpotifyUtil(String clientId, String clientSecret) {
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+    }
+
     private SpotifyApi getApiClient() {
 
         return new SpotifyApi.Builder()
