@@ -18,4 +18,6 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	compile 'se.michaelthelin.spotify:spotify-web-api-java:2.1.2'
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+	compile "io.springfox:springfox-swagger2:2.9.2"
+	compile 'io.springfox:springfox-swagger-ui:2.9.2'
 }

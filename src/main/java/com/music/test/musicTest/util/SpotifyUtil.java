@@ -3,32 +3,43 @@ package com.music.test.musicTest.util;
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Component
 public class SpotifyUtil {
+
+    @Value("${spotify.clientid}")
+    private String clientId;
+
+    @Value("${spotify.clientsecret}")
+    private String clientSecret;
+
     private SpotifyApi getApiClient() {
 
         return new SpotifyApi.Builder()
-                .setClientId("ca49f472b8ac4c43b921e343039aab41")
-                .setClientSecret("763bdae06dda4819a2e171e1dceaa43b")
+                .setClientId(clientId)
+                .setClientSecret(clientSecret)
                 .build();
     }
 
     private ClientCredentials getClientCredentials() throws IOException, SpotifyWebApiException {
-        return getApiClient().clientCredentials().build().execute();
+        return getApiClient()
+                .clientCredentials()
+                .build()
+                .execute();
     }
 
-    public String getApiToken() {
-        try {
-            return getClientCredentials().getAccessToken();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SpotifyWebApiException e) {
-            e.printStackTrace();
-        }
-        return "";
+    private String getApiToken() throws IOException, SpotifyWebApiException {
+        return getClientCredentials().getAccessToken();
+    }
+
+    public SpotifyApi getSpotifyApiClient() throws IOException, SpotifyWebApiException {
+
+        return new SpotifyApi.Builder()
+                .setAccessToken(getApiToken())
+                .build();
     }
 }

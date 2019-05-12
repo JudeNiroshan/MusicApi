@@ -4,4 +4,5 @@ public class SpotifyConstants {
 
     public static final String PLAYLIST_EXTERNAL_URL_KEY = "spotify";
     public static final String RESPONSE_ROOT_NAME = "playlists";
+    public static final String ERROR_RESPONSE_ROOT_NAME = "error";
 }

@@ -1,44 +1,47 @@
 package com.music.test.musicTest.handlers.impl;
 
+import com.music.test.musicTest.exceptions.SpotifyException;
 import com.music.test.musicTest.handlers.PlaylistHandler;
-import com.music.test.musicTest.models.Artist;
+import com.music.test.musicTest.handlers.SpotifyHandler;
 import com.music.test.musicTest.models.PlayListInfo;
-import com.music.test.musicTest.models.Playlist;
-import com.music.test.musicTest.services.SpotifyService;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import static com.music.test.musicTest.common.SpotifyConstants.ERROR_RESPONSE_ROOT_NAME;
 import static com.music.test.musicTest.common.SpotifyConstants.RESPONSE_ROOT_NAME;
 
 @Component
 public class PlaylistHandlerImpl implements PlaylistHandler {
 
     @Autowired
-    SpotifyService spotifyService;
+    SpotifyHandler spotifyHandler;
 
     @Override
     public JSONObject getPlaylistInfo() {
-        List<PlayListInfo> playListInfos = spotifyService.getFeaturedPlaylists()
-                .parallelStream()
-                .map(this::generatePlaylistInfo)
-                .collect(Collectors.toList());
 
-        return getResultAsJson(playListInfos);
+        try {
+            return getResultAsJson(spotifyHandler.getSpotifyData());
+        } catch (SpotifyException e) {
+            return getErrorAsJson(e);
+        }
     }
 
-    private PlayListInfo generatePlaylistInfo(Playlist playlist){
-        List<Artist> artists = spotifyService.getArtistsByPlaylistId(playlist.getId());
-        return new PlayListInfo(playlist, artists);
+    private JSONObject getResultAsJson(List<PlayListInfo> playListInfos) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(RESPONSE_ROOT_NAME, playListInfos);
+
+        return jsonObject;
     }
 
-    private JSONObject getResultAsJson(List<PlayListInfo> playListInfos){
-        JSONObject JSONObject = new JSONObject();
-        JSONObject.put(RESPONSE_ROOT_NAME, playListInfos);
+    private JSONObject getErrorAsJson(SpotifyException spotifyException) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(ERROR_RESPONSE_ROOT_NAME, spotifyException.getMessage());
+        jsonObject.put(RESPONSE_ROOT_NAME, Collections.EMPTY_LIST);
 
-        return JSONObject;
+        return jsonObject;
     }
 }
